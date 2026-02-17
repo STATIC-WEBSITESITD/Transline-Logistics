@@ -1,0 +1,42 @@
+.swiper-group-1 {
+    .swiper-pagination-banner {
+        position: absolute;
+        bottom: 37px !important;
+        left: 0px;
+        width: 100%;
+    }
+}
+.box-swiper {
+    .swiper-banner-1 {
+        padding-bottom: 0px;
+    }
+}
+
+// Hide pagination for Home hero slider (Homepage 1)
+.swiper-banner-1 {
+    .swiper-pagination-banner {
+        display: none !important;
+    }
+}
+
+// Black overlay for Home hero slider images (Homepage 1)
+.swiper-banner-1 {
+    .banner-1 {
+        position: relative;
+        &::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            background: rgba(0, 0, 0, 0.55);
+            z-index: 1;
+            pointer-events: none;
+        }
+        .container {
+            position: relative;
+            z-index: 2;
+        }
+    }
+}
