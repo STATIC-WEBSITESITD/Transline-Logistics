@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function Sidebar({ openClass, handleMobileMenuClose }) {
     const [isActive, setIsActive] = useState({
@@ -7,17 +7,19 @@ export default function Sidebar({ openClass, handleMobileMenuClose }) {
         key: "",
     });
 
+    // Reset submenu state whenever sidebar visibility changes so no stacked/open state persists
+    // (on open: start with all collapsed; on close: clear so next open is clean)
+    useEffect(() => {
+        setIsActive({ status: false, key: "" });
+    }, [openClass]);
+
     const handleToggle = (key) => {
-        if (isActive.key === key) {
-            setIsActive({
-                status: false,
-            });
-        } else {
-            setIsActive({
-                status: true,
-                key,
-            });
-        }
+        setIsActive((prev) => {
+            if (prev.key === key) {
+                return { status: false, key: "" };
+            }
+            return { status: true, key };
+        });
     };
     return (
         <>
@@ -38,20 +40,26 @@ export default function Sidebar({ openClass, handleMobileMenuClose }) {
                             <div className="mobile-menu-wrap mobile-header-border">
                                 <nav className="mt-15">
                                     <ul className="mobile-menu font-heading">
-                                        <li><Link href="/">Home</Link></li>
-                                        <li><Link href="/about">About Us</Link></li>
-                                        <li className={isActive.key == 2 ? "has-children active" : "has-children"} onClick={() => handleToggle(2)}>
-                                            <span className="menu-expand"><svg className="w-6 h-6 icon-16" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg></span>
-                                            <Link href="/services">Services</Link>
-                                            <ul className={isActive.key == 2 ? "sub-menu d-block" : "sub-menu d-none"}>
-                                                <li><Link href="/air-freight">Air Freight</Link></li>
-                                                <li><Link href="/sea-freight">Sea Freight</Link></li>
-                                                <li><Link href="/customs-clearance">Customs Clearance</Link></li>
+                                        <li><Link href="/" onClick={handleMobileMenuClose}>Home</Link></li>
+                                        <li><Link href="/about" onClick={handleMobileMenuClose}>About Us</Link></li>
+                                        <li className={isActive.key === 2 ? "has-children active" : "has-children"}>
+                                            <button type="button" className="menu-expand" aria-expanded={isActive.key === 2} onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleToggle(2); }} style={{ border: 'none', background: 'none', padding: 0 }}><svg className="w-6 h-6 icon-16" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg></button>
+                                            <Link href="/services" onClick={handleMobileMenuClose}>Services</Link>
+                                            <ul
+                                                className="sub-menu"
+                                                style={{
+                                                    display: isActive.key === 2 ? "block" : "none",
+                                                    overflow: "hidden",
+                                                }}
+                                            >
+                                                <li><Link href="/air-freight" onClick={handleMobileMenuClose}>Air Freight</Link></li>
+                                                <li><Link href="/sea-freight" onClick={handleMobileMenuClose}>Sea Freight</Link></li>
+                                                <li><Link href="/customs-clearance" onClick={handleMobileMenuClose}>Customs Clearance</Link></li>
                                             </ul>
                                         </li>
-                                        <li><Link href="/awards">Awards</Link></li>
-                                        <li><Link href="/blogs">Blogs</Link></li>
-                                        <li><Link href="/contact">Contact Us</Link></li>
+                                        <li><Link href="/awards" onClick={handleMobileMenuClose}>Awards</Link></li>
+                                        <li><Link href="/blogs" onClick={handleMobileMenuClose}>Blogs</Link></li>
+                                        <li><Link href="/contact" onClick={handleMobileMenuClose}>Contact Us</Link></li>
                                     </ul>
                                 </nav>
                             </div>

@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
+import { useRouter } from "next/router"
 import BackToTop from '../elements/BackToTop'
 import Footer from './Footer'
 import FooterNewsletter from "./FooterNewsletter"
@@ -27,12 +28,20 @@ export default function Layout({
         setOpenClass("sidebar-visible")
     }
 
-    const handleMobileMenuClose = () => {
-        if (openClass === "sidebar-visible") {
+    const handleMobileMenuClose = useCallback(() => {
+        setOpenClass("")
+        document.body.classList.remove("mobile-menu-active");
+    }, []);
+
+    const router = useRouter();
+    useEffect(() => {
+        const handleRouteChange = () => {
             setOpenClass("")
             document.body.classList.remove("mobile-menu-active");
-        }
-    }
+        };
+        router.events.on("routeChangeComplete", handleRouteChange);
+        return () => router.events.off("routeChangeComplete", handleRouteChange);
+    }, [router.events]);
 
     useEffect(() => {
         document.addEventListener("scroll", () => {
